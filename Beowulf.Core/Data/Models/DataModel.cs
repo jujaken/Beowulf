@@ -1,6 +1,6 @@
 ﻿namespace Beowulf.Core.Data.Models
 {
-    public class DataModel
+    public abstract class DataModel
     {
         public Guid Id { get; set; }
     }
