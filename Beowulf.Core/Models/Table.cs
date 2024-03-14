@@ -1,19 +1,28 @@
 ﻿using Beowulf.Core.Data.Models;
+using Beowulf.Core.Data.Repos;
+using System.Collections.ObjectModel;
 
 namespace Beowulf.Core.Models
 {
-    public class Table(TableModel model, ICellContentRule contentRule)
+    public class Table
     {
-        private readonly TableModel model = model;
-        public TableModel Data => model;
+        protected TableModel Data { get; }
 
-        private readonly ICellContentRule contentRule = contentRule;
-        public Cell[] Cells { get; protected set; } = [];
+        private readonly IRepo<TableModel> repo;
+        private readonly IRepo<CellModel> cellRepo;
 
-        public Task LoadCells()
+        private readonly ICellContentRule contentRule;
+        public ObservableCollection<Cell> Cells { get; protected set; } = [];
+
+        public Table(TableModel model, IRepo<TableModel> repo, IRepo<CellModel> cellRepo, ICellContentRule contentRule)
         {
-            Cells = model.Cells.Select(c => new Cell(this, c, contentRule)).ToArray();
-            return Task.CompletedTask;
+            Data = model;
+
+            this.repo = repo;
+            this.cellRepo = cellRepo;
+            this.contentRule = contentRule;
+
+            Cells = new(Data.Cells.Select(c => new Cell(this, c, cellRepo, contentRule)));
         }
     }
 }

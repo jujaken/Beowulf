@@ -1,10 +1,10 @@
 ﻿namespace Beowulf.Core.Models
 {
-    public class CellContent(ICellContentRule contentRule)
+    public class CellContent(ICellContentRule contentRule, Cell? cell = null)
     {
         private readonly ICellContentRule contentRule = contentRule;
 
-        private Cell? cell;
+        private Cell? cell = cell;
         public Cell? Cell
         {
             get => cell;
@@ -13,10 +13,8 @@
                 if (cell == value)
                     return;
 
-                contentRule.Remove(cell!, this);
-
-                if (value != null)
-                    contentRule.Add(cell!, this);
+                cell?.Contents.Remove(this);
+                value?.Contents.Add(this);
 
                 cell = value;
             }
