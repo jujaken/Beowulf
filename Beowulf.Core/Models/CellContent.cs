@@ -4,6 +4,8 @@
     {
         private readonly ICellContentRule contentRule = contentRule;
 
+        public Action<Cell?, Cell?>? CellWasChanged { get; set; }
+
         private Cell? cell = cell;
         public Cell? Cell
         {
@@ -16,8 +18,16 @@
                 cell?.Contents.Remove(this);
                 value?.Contents.Add(this);
 
+                var oldValue = cell;
                 cell = value;
+
+                CellWasChanged?.Invoke(oldValue, cell);
             }
+        }
+
+        public void Remove()
+        {
+            Cell = null;
         }
     }
 }
