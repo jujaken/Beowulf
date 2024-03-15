@@ -4,7 +4,7 @@ namespace Beowulf.Core
 {
     public interface ICellContentRule
     {
-        List<CellContent> Get(double[] vector);
-        double[] Get(List<CellContent> vector);
+        List<CellContent> Get(double[] subvector);
+        double[] Get(List<CellContent> subcontents);
     }
 }

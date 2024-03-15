@@ -1,51 +1,48 @@
 ﻿using Beowulf.Core.Exceptions;
 using Beowulf.Core.Models;
 using Microsoft.Extensions.DependencyInjection;
-using System.Globalization;
 
 namespace Beowulf.Core
 {
-    public abstract class PieceContentRule(IServiceProvider services) : ICellContentRule
+    /// <summary>
+    /// целая - тип фигуры, дробная - фракция
+    /// </summary>
+    public class PieceContentRule(IServiceProvider services) : CellContentRule
     {
         private readonly IServiceProvider services = services;
 
-        public abstract int E { get; protected set; }
-        public abstract int? MaxPieceNum { get; protected set; }
-        public abstract List<Type> PieceTypes { get; protected set; }
-        public abstract List<Type> FactionTypes { get; protected set; }
+        public List<Type> PieceTypes { get; set; } = [];
+        public List<Type> FactionTypes { get; set; } = [];
 
-        public double[] Get(List<CellContent> vector)
-        {
-            throw new NotImplementedException();
-        }
+        public override List<CellContent> Get(double[] subvector)
+            => subvector.Select(coordinate =>
+            {
+                (var code, var subcode) = GetCode(coordinate);
+                var piece = (Piece)services.GetRequiredService(PieceTypes[code]);
+                if (subcode != null)
+                    piece.Faction = (Faction)services.GetRequiredService(FactionTypes[(int)subcode]);
 
-        public List<CellContent> Get(double[] vector)
-        {
-            var skiped = vector[0..E] ?? throw new ContentRuleException();
+                return (CellContent)piece;
+            }).ToList();
 
-            if (MaxPieceNum == null)
-                return skiped.Select(c => MakePiece(c)).ToList();
+        public override double[] Get(List<CellContent> subcontents)
+            => subcontents.Select(content =>
+            {
+                var piece = (Piece)content;
 
-            return skiped[0..((int)MaxPieceNum + 1)].Select(c => MakePiece(c)).ToList();
-        }
+                var pieceId = PieceTypes.FindIndex(p => p == piece.GetType());
+                if (pieceId == -1)
+                    throw new ContentRuleException();
 
-        protected CellContent MakePiece(double fullcode)
-        {
-            (var code, var subcode) = GetCode(fullcode);
+                var faction = piece.Faction;
+                if (faction == null)
+                    return GetCode(pieceId, null);
 
-            var piece = (Piece)services.GetRequiredService(PieceTypes[code]);
-            piece.Faction = (Faction)services.GetRequiredService(FactionTypes[subcode]);
+                var factionId = FactionTypes.FindIndex(f => f == faction.GetType());
+                if (factionId == -1)
+                    throw new ContentRuleException();
 
-            return piece;
-        }
-
-        public static (int code, int subcode) GetCode(double fullcode)
-        {
-            var strs = fullcode.ToString("G", CultureInfo.InvariantCulture).Split('.');
-            return ((int)fullcode, strs.Length > 1 ? Convert.ToInt32(strs[1]) : 0);
-        }
-
-        public static double GetCode(int code, int subcode)
-            => code + subcode * Math.Pow(0.1, subcode.ToString().Length);
+                return GetCode(pieceId, factionId);
+            }).ToArray();
     }
 }
