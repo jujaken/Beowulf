@@ -1,24 +1,24 @@
 ﻿using Beowulf.Core.Exceptions;
 using Beowulf.Core.Models;
 using Microsoft.Extensions.DependencyInjection;
+using System.Collections.Generic;
 
 namespace Beowulf.Core
 {
     /// <summary>
     /// целая - тип фигуры, дробная - фракция
     /// </summary>
-    public class PieceContentRule(IServiceProvider services) : CellContentRule
+    public class PieceContentRule(IServiceProvider services, List<Type> pieceTypes, List<Type> factionTypes) : CellContentRule
     {
-        private readonly IServiceProvider services = services;
-
-        public List<Type> PieceTypes { get; set; } = [];
-        public List<Type> FactionTypes { get; set; } = [];
+        protected IServiceProvider Services { get; } = services;
+        protected List<Type> PieceTypes { get; } = pieceTypes;
+        protected List<Type> FactionTypes { get; } = factionTypes;
 
         public override List<CellContent> Get(double[] subvector)
             => subvector.Select(coordinate =>
             {
                 (var code, var subcode) = GetCode(coordinate);
-                var piece = (Piece)services.GetRequiredService(PieceTypes[code]);
+                var piece = (Piece)Services.GetRequiredService(PieceTypes[code]);
                 if (subcode != null)
                     piece.Faction = (Faction)services.GetRequiredService(FactionTypes[(int)subcode]);
 
