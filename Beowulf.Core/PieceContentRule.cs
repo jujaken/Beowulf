@@ -20,7 +20,7 @@ namespace Beowulf.Core
                 (var code, var subcode) = GetCode(coordinate);
                 var piece = (Piece)Services.GetRequiredService(PieceTypes[code]);
                 if (subcode != null)
-                    piece.Faction = (Faction)services.GetRequiredService(FactionTypes[(int)subcode]);
+                    piece.Faction = (Faction)Services.GetRequiredService(FactionTypes[(int)subcode]);
 
                 return (CellContent)piece;
             }).ToList();
