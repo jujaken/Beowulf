@@ -5,10 +5,8 @@ namespace Beowulf.WpfShogi.ViewModels
 {
     public partial class TableVM : ObservableObject
     {
-        [ObservableProperty]
-        public ObservableCollection<CellVM> cellVMs = [];
+        [ObservableProperty] public ObservableCollection<CellVM> cellVMs = [];
 
-        [ObservableProperty]
-        public CellVM? curCellVM;
+        [ObservableProperty] public CellVM? curCellVM;
     }
 }
