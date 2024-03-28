@@ -1,8 +1,6 @@
 ﻿using Beowulf.Core.Exceptions;
 using Beowulf.Core.Models;
 using Microsoft.Extensions.DependencyInjection;
-using System.Collections.Generic;
-
 namespace Beowulf.Core
 {
     /// <summary>

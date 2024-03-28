@@ -18,6 +18,6 @@ namespace Beowulf.Core
 
         /// <summary> собирает дробное число </summary>
         protected static double GetCode(int code, int? subcode)
-            => code + (double)(subcode != null ? subcode * Math.Pow(0.1, subcode!.ToString()!.Length) : 0);
+            => code + (double)(subcode != null ? subcode * System.Math.Pow(0.1, subcode!.ToString()!.Length) : 0);
     }
 }
