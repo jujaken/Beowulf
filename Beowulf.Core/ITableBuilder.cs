@@ -11,8 +11,6 @@ namespace Beowulf.Core
         ITableBuilder WithTableRepo(IRepo<TableModel> tableRepo);
         ITableBuilder WithCellRepo(IRepo<CellModel> tableRepo);
         ITableBuilder WithCellContentRule(ICellContentRule contentRule, int start, int end);
-        ITableBuilder WithCellContentRule(ICellPosRule posRule);
-        ITableBuilder WithCellContentRule(ICellLinkRule linkRule);
         Table Build();
     }
 }
